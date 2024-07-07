@@ -40,7 +40,14 @@ private boolean usuarioActivo = false;
     
 	@PostMapping("/login")
 	public String autUsuario(@ModelAttribute("usuario") Usuario usuario) {
+					System.out.println(usuario);
+					
 					Usuario miusuario = usuarioService.buscarUsername(usuario.getUsername());
+					if (miusuario == null) {
+						return "redirect:/login";
+					}
+					else {
+					
 					
 					if (usuarioService.verificarUsuario(miusuario.getUsername(),miusuario.getPass())) {
 						usuarioActivo = true;
@@ -48,10 +55,9 @@ private boolean usuarioActivo = false;
 						
 						}
 					else {
-						usuarioActivo = false;
 						return "redirect:/login";
 					}
-		
+					}
 				}
 	
 	@GetMapping("/usuario/new")
