@@ -40,7 +40,6 @@ private boolean usuarioActivo = false;
     
 	@PostMapping("/login")
 	public String autUsuario(@ModelAttribute("usuario") Usuario usuario) {
-					System.out.println(usuario);
 					
 					Usuario miusuario = usuarioService.buscarUsername(usuario.getUsername());
 					if (miusuario == null) {
