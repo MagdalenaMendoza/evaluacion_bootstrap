@@ -21,6 +21,8 @@ import com.keepcoding.app.web.entity.Usuario;
 @Controller
 public class AlumnoController {
 
+private boolean usuarioActivo = false;
+	
 	@Autowired
 	private AlumnoService alumnoService;
 	
@@ -38,15 +40,15 @@ public class AlumnoController {
     
 	@PostMapping("/login")
 	public String autUsuario(@ModelAttribute("usuario") Usuario usuario) {
-					System.out.println(usuario.getUsername());
-					System.out.println(usuario.getPass());
 					Usuario miusuario = usuarioService.buscarUsername(usuario.getUsername());
-					System.out.println(miusuario.isActivo());
+					
 					if (usuarioService.verificarUsuario(miusuario.getUsername(),miusuario.getPass())) {
-						System.out.println("por aqui");
+						usuarioActivo = true;
 						return "redirect:/alumnos";
+						
 						}
 					else {
+						usuarioActivo = false;
 						return "redirect:/login";
 					}
 		
@@ -69,8 +71,13 @@ public class AlumnoController {
 	
 	@GetMapping({"/","/alumnos"})
 	public String Index(Model modelo){
-			modelo.addAttribute("alumno", alumnoService.listarAlumnos());
+		if (usuarioActivo) {	
+		modelo.addAttribute("alumno", alumnoService.listarAlumnos());
 			return "alumno";
+		}
+		else {
+			return "redirect:/login";
+		}
 	}
 	
 
@@ -78,9 +85,14 @@ public class AlumnoController {
 	@GetMapping("/alumno/new")
 	
 	public String newAlumno(Model modelo) {
-		Alumno alumno = new Alumno();
-		modelo.addAttribute("alumno",alumno);
-		return "crear_alumno";
+		if (usuarioActivo) {
+			Alumno alumno = new Alumno();
+			modelo.addAttribute("alumno",alumno);
+			return "crear_alumno";
+		}
+		else {
+			return "redirect:/login";
+		}
 	}
 	
 	@PostMapping("/alumno")
@@ -111,8 +123,13 @@ public class AlumnoController {
 	
 	@GetMapping("/alumno/eliminar/{id}")
 	public String deleteAlumno(@PathVariable Long id) {
+		if (usuarioActivo) {
 		alumnoService.eliminarAlumno(id);
 		return "redirect:/";
+		}
+		else {
+			return "redirect:/login";
+		}
 	}
 	
 }
